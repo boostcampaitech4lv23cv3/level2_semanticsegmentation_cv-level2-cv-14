@@ -23,7 +23,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 @hydra.main(version_base=None, config_path="../configs", config_name="inference")
 def main(cfg: DictConfig) -> None:
     # Experiment name
-    print(f"Experiement: {cfg.name}")
+    print(f"Model weight: '{cfg.training.save_dir}/{cfg.weight}'")
 
     # seed
     seedEverything(cfg.seed)
@@ -47,7 +47,7 @@ def main(cfg: DictConfig) -> None:
     )
 
     # Model
-    model_path = f"./saved/{cfg.name}.pt"
+    model_path = os.path.join(cfg.training.save_dir, cfg.weight)
     print(f"Instantiating Model.. <{model_path}>")
     model = instantiate(cfg.model)
     model = model.to(device)
@@ -73,7 +73,7 @@ def main(cfg: DictConfig) -> None:
         )
 
     # submission.csv로 저장
-    submission.to_csv(f"../submission/{cfg.name}.csv", index=False)
+    submission.to_csv(f"../submission/{cfg.weight[:-3]}.csv", index=False)
 
 
 if __name__ == "__main__":
