@@ -10,7 +10,7 @@ defaults:
   - logger: wandb.yaml
   - training: default.yaml
 
-name: ???
+weight: ???
 seed: 42
 
 # task_name: "eval"
