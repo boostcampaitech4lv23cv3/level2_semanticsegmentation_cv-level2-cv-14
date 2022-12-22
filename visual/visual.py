@@ -25,11 +25,23 @@ def main():
         coco_path = "../data/" + coco_json
         mode = st.radio("data mode", ("train", "test"))
 
+        if (
+            "coco_path" not in st.session_state
+            or coco_path != st.session_state.coco_path
+        ):
+            st.session_state.dataset = load_data(coco_path, mode)
+            st.session_state.coco_path = coco_path
+
     with col2:
         model_path = st.selectbox("model을 선택해주세요.", sorted(os.listdir("./saved/")))
-        model = torch.load("./saved/" + model_path, map_location=device)
-    if "dataset" not in st.session_state:
-        st.session_state.dataset = load_data(coco_path, mode)
+        if (
+            "model_path" not in st.session_state
+            or model_path != st.session_state.model_path
+        ):
+            st.session_state.model = torch.load(
+                "./saved/" + model_path, map_location=device
+            )
+            st.session_state.model_path = model_path
 
     if mode == "train":
         img_index = st.slider("이미지 Index", 0, len(st.session_state.dataset), 0, 1)
@@ -45,7 +57,12 @@ def main():
         ax2.grid(False)
         ax2.set_title("masks", fontsize=15)
 
-        pred = model(temp_images.unsqueeze(0).to(device)).squeeze().argmax(0).cpu()
+        pred = (
+            st.session_state.model(temp_images.unsqueeze(0).to(device))
+            .squeeze()
+            .argmax(0)
+            .cpu()
+        )
 
         ax3.imshow(pred)
         ax3.grid(False)
@@ -67,7 +84,12 @@ def main():
         ax1.grid(False)
         ax1.set_title("input image", fontsize=15)
 
-        pred = model(temp_images.unsqueeze(0).to(device)).squeeze().argmax(0).cpu()
+        pred = (
+            st.session_state.model(temp_images.unsqueeze(0).to(device))
+            .squeeze()
+            .argmax(0)
+            .cpu()
+        )
 
         ax2.imshow(pred)
         ax2.grid(False)
