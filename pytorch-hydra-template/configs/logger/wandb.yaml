@@ -1,0 +1,4 @@
+_target_: wandb.init
+entity: "level2_object-detection-cv14"
+project: "segmentation"
+name: ${name}

@@ -1,0 +1,4 @@
+max_epoch: 30
+save_dir: ./saved
+val_every: 1
+log_step: 25

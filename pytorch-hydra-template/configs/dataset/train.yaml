@@ -1,0 +1,4 @@
+train:
+  _target_: dataset.CustomDataSet
+  data_dir: '../../data'
+  mode: train

@@ -1,0 +1,21 @@
+defaults:
+  - _self_
+  - dataset:
+    - test
+  - dataloader: default.yaml
+  - model: default.yaml
+  - loss: default.yaml
+  - optimizer: default.yaml
+  - scheduler: default.yaml
+  - logger: wandb.yaml
+  - training: default.yaml
+
+name: ???
+seed: 42
+
+# task_name: "eval"
+
+# tags: ["dev"]
+
+# # passing checkpoint path is necessary for evaluation
+# ckpt_path: ???
