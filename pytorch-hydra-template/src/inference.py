@@ -73,7 +73,10 @@ def main(cfg: DictConfig) -> None:
         )
 
     # submission.csv로 저장
-    submission.to_csv(f"../submission/{cfg.weight[:-3]}.csv", index=False)
+    submission.to_csv(
+        f"../submission/{cfg.weight.split('/')[0]}_{cfg.weight.split('/')[1][:-3]}.csv",
+        index=False,
+    )
 
 
 if __name__ == "__main__":
