@@ -89,7 +89,7 @@ def main(cfg: DictConfig) -> None:
         scheduler,
         device,
         cfg.training.max_epoch,
-        cfg.training.save_dir,
+        cfg.paths.output_dir,
         cfg.training.val_every,
         cfg.training.log_step,
         cfg.logger.name,

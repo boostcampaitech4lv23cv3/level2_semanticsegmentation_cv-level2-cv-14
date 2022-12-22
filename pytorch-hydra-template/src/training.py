@@ -171,4 +171,4 @@ def train(
                 print(f"Best performance at epoch: {epoch + 1}")
                 print(f"Save model in {saved_dir}")
                 best_loss = avrg_loss
-                save_model(model, saved_dir, exp_name + ".pt")
+                save_model(model, saved_dir, exp_name + f'_epoch_{epoch:03d}' + ".pt")
