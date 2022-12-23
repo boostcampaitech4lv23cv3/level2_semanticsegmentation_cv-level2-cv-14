@@ -93,6 +93,7 @@ def main(cfg: DictConfig) -> None:
         cfg.training.val_every,
         cfg.training.log_step,
         cfg.logger.name,
+        cfg.training.save_every_epoch,
     )
     wandb.finish()
 

@@ -78,7 +78,7 @@ def validation(epoch, model, data_loader, criterion, device):
         wandb.log(val_dict)
         print(f"IoU by class : {IoU_by_class}")
 
-    return avrg_loss
+    return avrg_loss, mIoU
 
 
 def save_model(model, saved_dir, file_name="efficient_unet_best_model.pt"):
@@ -100,10 +100,12 @@ def train(
     val_every,
     log_step,
     exp_name,
+    save_every_epoch: bool,
 ):
     print(f"Start training..")
     n_class = 11
     best_loss = 9999999
+    best_metric = 0
     scaler = torch.cuda.amp.GradScaler()
 
     for epoch in range(num_epochs):
@@ -164,11 +166,20 @@ def train(
             f"Epoch [{epoch+1}/{num_epochs}], Step [{step+1}/{len(data_loader)}], \
                 Loss: {round(loss.item(),4)}, mIoU: {round(mIoU,4)}"
         )
+        if save_every_epoch:
+            print(f"Save model in {saved_dir}")
+            save_model(model, saved_dir + "/", f"epoch_{epoch+1}.pt")
         # validation 주기에 따른 loss 출력 및 best model 저장
         if (epoch + 1) % val_every == 0:
-            avrg_loss = validation(epoch + 1, model, val_loader, criterion, device)
+            avrg_loss, mIoU = validation(epoch + 1, model, val_loader, criterion, device)
             if avrg_loss < best_loss:
-                print(f"Best performance at epoch: {epoch + 1}")
+                print(f"Best Loss at epoch: {epoch + 1}")
                 print(f"Save model in {saved_dir}")
                 best_loss = avrg_loss
-                save_model(model, saved_dir, exp_name + f'_epoch_{epoch:03d}' + ".pt")
+                save_model(model, saved_dir + "/", "best_loss.pt")
+            # best metric model save
+            if mIoU > best_metric:
+                print(f"Best mIoU at epoch: {epoch + 1}")
+                print(f"Save model in {saved_dir}")
+                best_metric = mIoU
+                save_model(model, saved_dir + "/", "best_mIoU.pt")

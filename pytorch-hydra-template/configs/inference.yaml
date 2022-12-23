@@ -9,8 +9,9 @@ defaults:
   - scheduler: default.yaml
   - logger: wandb.yaml
   - training: default.yaml
+  - paths: default.yaml
 
-name: ???
+weight: ???
 seed: 42
 
 # task_name: "eval"
