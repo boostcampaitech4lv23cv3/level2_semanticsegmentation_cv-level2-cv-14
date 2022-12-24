@@ -49,6 +49,7 @@ def main(cfg: DictConfig) -> None:
         num_workers=cfg.dataloader.num_workers,
         collate_fn=collate_fn,
         worker_init_fn=_init_fn,
+        drop_last=True,
     )
     print(f"Instantiating Valid DataLoader.. <{cfg.dataloader._target_}>")
     val_loader = instantiate(
@@ -59,6 +60,7 @@ def main(cfg: DictConfig) -> None:
         num_workers=cfg.dataloader.num_workers,
         collate_fn=collate_fn,
         worker_init_fn=_init_fn,
+        drop_last=True,
     )
 
     # Model
