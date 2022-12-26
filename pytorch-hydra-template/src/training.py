@@ -169,6 +169,9 @@ def train(
         if save_every_epoch:
             print(f"Save model in {saved_dir}")
             save_model(model, saved_dir + "/", f"epoch_{epoch+1}.pt")
+        else:
+            print(f"Save model in {saved_dir}")
+            save_model(model, saved_dir + "/", "latest.pt")
         # validation 주기에 따른 loss 출력 및 best model 저장
         if (epoch + 1) % val_every == 0:
             avrg_loss, mIoU = validation(epoch + 1, model, val_loader, criterion, device)
