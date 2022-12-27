@@ -11,71 +11,78 @@ from ..builder import PIPELINES
 @PIPELINES.register_module()
 class Gridmask(object):
     """
-    Crop image by grid.
+    Cutout image & seg by grid.
 
     Args:
         ratio (float): define grid mask size by ratio (grid length * ratio)
+        p (float): gridmast probability
         'TODO'
-
     """
-    def __init__(self, ratio, holes_number_x, holes_number_y, random_offset=False, p=1.0):
+    def __init__(self, 
+                 ratio, 
+                 holes_number_x, 
+                 holes_number_y, 
+                 random_offset=False,
+                 fill_in=(0, 0, 0),
+                 seg_fill_in=None,
+                 p=1.0):
+
+        assert 0 < ratio < 1
+        assert holes_number_x > 0 and holes_number_y > 0
+        assert 0 <= p <= 1
+        if seg_fill_in is not None:
+            assert (isinstance(seg_fill_in, int) and 0 <= seg_fill_in
+                    and seg_fill_in <= 255)
+
         self.ratio = ratio
         self.holes_num_x = holes_number_x
         self.holes_num_y = holes_number_y
-        "TODO"
-        self.random_offset = random_offset
+        self.random_offset = random_offset #"TODO"
+        self.fill_in = fill_in
+        self.seg_fill_in = seg_fill_in
         self.p = p
 
-    def get_crop_bbox_list(self, img):
-        """Generate grid and crop bounding box"""
-        # x축 grid, y축 grid 당 각각의 길이 구함 
-        grid_len_x = int(img.shape[1] / self.holes_num_x)
-        grid_len_y = int(img.shape[0] / self.holes_num_y)
-        
-        "TODO"
-        # random offset 
+    def get_grid_len(self, img):
+        """get cutout box w, h"""
+        grid_w = int(img.shape[1] / self.holes_num_x)
+        grid_h = int(img.shape[0] / self.holes_num_y)
+        return grid_w, grid_h
+
+    def get_cutout_grid_list(self, grid_w, grid_h):
+        """Generate grid coordinate list."""
+        # random offset "TODO"
         offset = [0, 0]
         if self.random_offset:
             pass
 
-        crop_bbox_list = []
+        cutout_grid_list = []
         for i in range(self.holes_num_y):
             for j in range(self.holes_num_x):
-                grid_x, grid_y = j * grid_len_x, i * grid_len_y
-                crop_x1, crop_x2 = grid_x, grid_x + (grid_len_x * self.ratio)
-                crop_y1, crop_y2 = grid_y, grid_y + (grid_len_y * self.ratio)
-                
-                crop_bbox_list.append([crop_y1, crop_y2, crop_x1, crop_x2])
+                grid_x, grid_y = (j * grid_w) + offset[0], (i * grid_h) + offset[1]
+                cutout_grid_list.append([grid_x, grid_y])
         
-        return crop_bbox_list
-
-    def crop(self, img, crop_bbox):
-        """Crop from ``img``"""
-        crop_y1, crop_y2, crop_x1, crop_x2 = crop_bbox
-        img = img[crop_y1:crop_y2, crop_x1:crop_x2, ...]
-        return img
+        return cutout_grid_list
 
     def __call__(self, results):
+        """Call function to drop regions of image."""
+        cutout = True if np.random.rand() < self.p else False
 
-        """Call function to randomly crop images, semantic segmentation maps.
+        if cutout:
+            img = results['img']
+            h, w, c = img.shape
+            grid_w, grid_h = self.get_grid_len(img)
+            n_holes = self.get_cutout_grid_list(grid_w, grid_h)
+            cutout_w, cutout_h = int(grid_w * self.ratio), int(grid_h * self.ratio)
 
-        Args:
-            results (dict): Result dict from loading pipeline. 
-            
-        """
-        img = results['img']
-        crop_bbox_list = self.get_crop_bbox_list(img)
+            for hole in range(n_holes):
+                x1, y1 = hole[0], hole[1]
 
-        # crop the image
-        for crop_bbox in crop_bbox_list:
-            img = self.crop(img, crop_bbox)
-        img_shape = img.shape
-        results['img'] = img
-        results['img_shape'] = img_shape
+                x2 = np.clip(x1 + cutout_w, 0, w)
+                y2 = np.clip(y1 + cutout_h, 0, h)
+                results['img'][y1:y2, x1:x2, :] = self.fill_in
 
-        # crop semantic seg
-        for key in results.get('seg_fields', []):
-            for crop_bbox in crop_bbox_list:
-                results[key] = self.crop(results[key], crop_bbox)
+                if self.seg_fill_in is not None:
+                    for key in results.get('seg_fields', []):
+                        results[key][y1:y2, x1:x2] = self.seg_fill_in
 
         return results
