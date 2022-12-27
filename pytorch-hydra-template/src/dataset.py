@@ -142,50 +142,22 @@ class CopyPasteDataSet(Dataset):
             # masks : size가 (height x width)인 2D
             # 각각의 pixel 값에는 "category id" 할당
             # Background = 0
-            masks = np.zeros((image_infos["height"], image_infos["width"]))
+
             # General trash = 1, ... , Cigarette = 10
             anns = sorted(anns, key=lambda idx: idx["area"], reverse=True)
-            bboxes = []
+            bboxes, masks = [], []
             for i in range(len(anns)):
                 category_id = anns[i]["category_id"]
                 className = get_classname(category_id, cats)
                 pixel_value = self.category_names.index(className)
                 x, y, x2, y2 = anns[i]["bbox"]
-                bboxes.append([x, y, x2, y2, category_id, i])
-                masks[self.coco.annToMask(anns[i]) == 1] = pixel_value
-            masks = masks.astype(np.int8)
+                bboxes.append([x, y, x2, y2, int(category_id), int(i)])
+                mask = np.zeros((image_infos["height"], image_infos["width"]))
+                mask[self.coco.annToMask(anns[i]) == 1] = pixel_value
+                mask.astype(np.int8)
+                masks.append(mask)
 
-            # copy_paste
-            # paste_id = self.coco.getImgIds(imgIds=index + 1)
-            # paste_infos = self.coco.loadImgs(paste_id)[0]
-            # paste_image = cv2.imread(
-            #     os.path.join(self.data_dir, paste_infos["file_name"])
-            # )
-            # paste_image = cv2.cvtColor(paste_image, cv2.COLOR_BGR2RGB).astype(
-            #     np.float32
-            # )
-            # paste_image /= 255.0
-            # ann_ids = self.coco.getAnnIds(imgIds=paste_infos["id"])
-            # anns = self.coco.loadAnns(ann_ids)
-            # cat_ids = self.coco.getCatIds()
-            # cats = self.coco.loadCats(cat_ids)
-            # paste_masks = np.zeros((image_infos["height"], image_infos["width"]))
-            # anns = sorted(anns, key=lambda idx: idx["area"], reverse=True)
-            # paste_bboxes = []
-            # for i in range(len(anns)):
-            #     category_id = anns[i]["category_id"]
-            #     className = get_classname(category_id, cats)
-            #     pixel_value = self.category_names.index(className)
-            #     x, y, x2, y2 = anns[i]["bbox"]
-            #     paste_bboxes.append([x, y, x2, y2, category_id, i])
-            #     paste_masks[self.coco.annToMask(anns[i]) == 1] = pixel_value
-            # paste_masks = paste_masks.astype(np.int8)
-
-            # transform -> albumentations 라이브러리 활용
-            if self.transform is not None:
-                transformed = self.transform(image=images, mask=masks, bboxes=bboxes)
-
-            return transformed
+            return {"image": images, "masks": masks, "bboxes": bboxes}, image_infos
 
         if self.mode == "test":
             # transform -> albumentations 라이브러리 활용
