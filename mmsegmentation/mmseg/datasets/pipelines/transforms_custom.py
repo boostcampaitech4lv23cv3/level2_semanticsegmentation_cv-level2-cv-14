@@ -13,10 +13,17 @@ class Gridmask(object):
     """
     Cutout image & seg by grid.
 
+    'TODO'
     Args:
         ratio (float): define grid mask size by ratio (grid length * ratio)
-        p (float): gridmast probability
-        'TODO'
+        holes_number_x (int): 
+        holes_number_y (int):
+        random_offset (float):
+        fill_in (tuple[float, float, float] | tuple[int, int, int]): The value
+            of pixel to fill in the dropped regions. Default: (0, 0, 0).
+        seg_fill_in (int): The labels of pixel to fill in the dropped regions.
+            If seg_fill_in is None, skip. Default: None.
+        prob (float): gridmask probability
     """
     def __init__(self, 
                  ratio, 
@@ -25,7 +32,7 @@ class Gridmask(object):
                  random_offset=False,
                  fill_in=(0, 0, 0),
                  seg_fill_in=None,
-                 p=1.0):
+                 prob=1.0):
 
         assert 0 < ratio < 1
         assert holes_number_x > 0 and holes_number_y > 0
@@ -40,7 +47,7 @@ class Gridmask(object):
         self.random_offset = random_offset #"TODO"
         self.fill_in = fill_in
         self.seg_fill_in = seg_fill_in
-        self.p = p
+        self.prob = prob
 
     def get_grid_len(self, img):
         """get cutout box w, h"""
@@ -50,22 +57,22 @@ class Gridmask(object):
 
     def get_cutout_grid_list(self, grid_w, grid_h):
         """Generate grid coordinate list."""
-        # random offset "TODO"
-        offset = [0, 0]
+        offset_x, offset_y = 0, 0
         if self.random_offset:
-            pass
+            offset_x = np.random.randint(0, grid_w * (1-self.ratio))
+            offset_y = np.random.randint(0, grid_h * (1-self.ratio))
 
         cutout_grid_list = []
         for i in range(self.holes_num_y):
             for j in range(self.holes_num_x):
-                grid_x, grid_y = (j * grid_w) + offset[0], (i * grid_h) + offset[1]
+                grid_x, grid_y = (j * grid_w) + offset_x, (i * grid_h) + offset_y
                 cutout_grid_list.append([grid_x, grid_y])
         
         return cutout_grid_list
 
     def __call__(self, results):
         """Call function to drop regions of image."""
-        cutout = True if np.random.rand() < self.p else False
+        cutout = True if np.random.rand() < self.prob else False
 
         if cutout:
             img = results['img']
