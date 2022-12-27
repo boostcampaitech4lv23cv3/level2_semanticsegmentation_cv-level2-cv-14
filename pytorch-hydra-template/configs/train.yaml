@@ -11,6 +11,8 @@ defaults:
   - scheduler: default.yaml
   - logger: wandb.yaml
   - training: default.yaml
+  - hydra: default.yaml
+  - paths: default.yaml
 
 # experiment name
 name: ???
