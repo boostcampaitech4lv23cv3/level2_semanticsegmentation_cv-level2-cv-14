@@ -36,7 +36,7 @@ class Gridmask(object):
 
         assert 0 < ratio < 1
         assert holes_number_x > 0 and holes_number_y > 0
-        assert 0 <= p <= 1
+        assert 0 <= prob <= 1
         if seg_fill_in is not None:
             assert (isinstance(seg_fill_in, int) and 0 <= seg_fill_in
                     and seg_fill_in <= 255)
@@ -81,7 +81,7 @@ class Gridmask(object):
             n_holes = self.get_cutout_grid_list(grid_w, grid_h)
             cutout_w, cutout_h = int(grid_w * self.ratio), int(grid_h * self.ratio)
 
-            for hole in range(n_holes):
+            for hole in n_holes:
                 x1, y1 = hole[0], hole[1]
 
                 x2 = np.clip(x1 + cutout_w, 0, w)
