@@ -95,7 +95,7 @@ class ADE20KDataset(CustomDataset):
         super(ADE20KDataset, self).__init__(
             img_suffix='.jpg',
             seg_map_suffix='.png',
-            reduce_zero_label=True,
+            reduce_zero_label=False,
             **kwargs)
 
     def results2img(self, results, imgfile_prefix, to_label_id, indices=None):
@@ -132,7 +132,7 @@ class ADE20KDataset(CustomDataset):
             # The  index range of official requirement is from 0 to 150.
             # But the index range of output is from 0 to 149.
             # That is because we set reduce_zero_label=True.
-            result = result + 1
+            result = result # + 1
 
             output = Image.fromarray(result.astype(np.uint8))
             output.save(png_filename)
