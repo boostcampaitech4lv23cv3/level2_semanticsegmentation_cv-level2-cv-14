@@ -64,10 +64,10 @@ convnext 모델이 swin 모델과 비슷한 성능을 보여주지만 훈련 시
 - Resize
 - Random Flip
 - PhotoMetricDistortion
-- Normalize Augmentation \
+- Normalize Augmentation
 #### Ablumentation Augmentation
 - Random Rotate90
-- One of (Blur, GaussianBlur, MotionBlur
+- One of (Blur, GaussianBlur, MotionBlur)
 
 ### Optimization
 
@@ -77,7 +77,7 @@ convnext 모델이 swin 모델과 비슷한 성능을 보여주지만 훈련 시
     
     - lr = 0.0001 → 6e-5 (마지막 제출 전 fine tuning)
 - Warm Up linear Scheduler
-    - mmsegemntation에서 convnext backbone을 사용하는 경우 기본적으로 정의된 warm up linear scheduler 사용
+    - mmsegementation에서 convnext backbone을 사용하는 경우 기본적으로 정의된 warm up linear scheduler 사용
 
 ## 기타
 
@@ -117,7 +117,7 @@ train data 뿐만 아니라, validation data와 annotation이 되지 않은 기�
 | Ranking | 6th / 19th | 7th / 19th |
 
 ## Command
-- mmdetection train command
+- mmsegmentation train command
 ```
 cd mmsegmentation
 python tools/train.py {config file}
