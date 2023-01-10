@@ -6,13 +6,13 @@
 | <img src="https://avatars.githubusercontent.com/kzh3010" width="100"> | <img src="https://avatars.githubusercontent.com/JSJSWON" width="100"> | <img src="https://avatars.githubusercontent.com/gih0109" width="100"> | <img src="https://avatars.githubusercontent.com/GeonHyeock" width="100"> | <img src="https://avatars.githubusercontent.com/archemist-hong" width="100"> |
 ***
 ## Index
-* [Project Summary](#Project-Summary)
-* [Team role](#Team-role)
-* [Procedures](#Procedures)
+* [Project Summary](#project-summary)
+* [Team role](#team-role)
+* [Procedures](#procedures)
 * [Model](#model)
 * [Result](#result)
-* [Command](#Command)
-* [Wrap UP Report](#Wrap-UP-Report)  
+* [Command](#command)
+* [Wrap UP Report](#wrap-up-report)  
 ***
 
 
@@ -98,12 +98,12 @@ input size는 크기가 클수록 성능 향상이 되어 (512, 512)로 학습�
 
 ## Pseudo Labeling
 
-| type | LBscore | val mIoU | val mIoU best | 시간 | step | dataset |
+| type | LBscore | val mIoU | val mIoU best | 시간  | step | dataset |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| base | 0.6792 | 0.7104 | 0.7123 | 약 1h | 20000 | train only |
-| pseudo-label | 0.7510 | 0.7561 | 0.7561 | 약 9h | 100000 | train + test |
-| pseudo-label2 | 0.7601 | 0.9664 | 0.9664 | 약 14h | 163600 | train + test + val + 남은 데이터 |
-| pseudo-label3 | 0.7733 | 0.9646 | 0.9646 | 약 14h | 163600 | train + test + val + 남은 데이터 |
+| base | 0.6792 | 0.7104 | 0.7123 | 약 1h | 20000  | train only |
+| pseudo-label | 0.7510 | 0.7561 | 0.7561 | 약 9h  | 100000 | train + test |
+| pseudo-label2 | 0.7601 | 0.9664 | 0.9664 | 약 14h  | 163600 | train + test + val + 남은 데이터 |
+| pseudo-label3 | 0.7733 | 0.9646 | 0.9646 | 약 14h  | 163600 | train + test + val + 남은 데이터 |
 
 train data 뿐만 아니라, validation data와 annotation이 되지 않은 기타 데이터, test data에 pseudo label을 사용하여 모델을 학습시키고, 모델 성능에 개선이 있는 경우 반복해서 pseudo label을 다시 달아 학습시키는 방식으로 모델 성능을 크게 끌어 올림
 
