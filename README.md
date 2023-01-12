@@ -138,4 +138,4 @@ streamlit run visual/visual.py --server.port=[port 번호]
 
 ---
 ## Wrap UP Report
-- [Report](https://howmuchisit.notion.site/Wrap-Up-f39d8b3501dc40c49b61a82b0a3756a2)
+- [Report](https://whatsthescore.notion.site/Wrap-Up-f39d8b3501dc40c49b61a82b0a3756a2)
